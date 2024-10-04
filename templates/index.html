@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Search</title>
+        <link rel="stylesheet" href=" {{ url_for('static', filename='css/main_style.css') }}">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+        </head>
+    <body>
+        <script>
+            function doAction(){
+                let msgEle = document.getElementById("search_keyword");
+                if(msgEle.value.length == 0){
+                    swal('검색어를 입력하세요', ' ' , 'warning');
+                    return false;
+                }
+                return true;
+            }
+            $(document).ready(function() {
+                // 페이지 로드 시 북마크 상태 가져오기
+                $.ajax({
+                    type: "GET",
+                    url: "/bookmarks",
+                    success: function(bookmarkedLinks) {
+                        console.log(bookmarkedLinks); // 서버에서 받아온 북마크 목록 확인
+                        const bookmarkedSet = new Set(bookmarkedLinks.map(bm => bm.link)); // 링크만 저장
+        
+                        $(".bookmark-btn").each(function() {
+                            const $button = $(this);
+                            const link = $button.data("link");
+        
+                            if (bookmarkedSet.has(link)) {
+                                $button.find("img").attr("src", "static/css/filled_star.png");
+                            } else {
+                                $button.find("img").attr("src", "static/css/empty_star.png");
+                            }
+                        });
+                    },
+                    error: function() {
+                        console.error("북마크 상태를 가져오는 데 오류가 발생했습니다.");
+                    }
+                });
+    
+            });
+            // 북마크 팝업 띄우기
+            function showBookmarkPopup() {
+                $.ajax({
+                    type: "GET",
+                    url: "/bookmarks", // 데이터베이스에서 북마크를 불러오는 엔드포인트
+                    success: function(savedBookmarks) {
+                    // 로컬 스토리지에서 북마크 데이터 불러오기
+                    //const savedBookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+    
+                        let bookmarkHtml = savedBookmarks.map(bm => `
+                            <div class="bookmark-item">
+                                <div class="bookmark-img">
+                                    <img src="${bm.image}" alt="thumbnail" style="width: 80px; height:80px; margin-right:20px; object-fit:cover;">
+                                </div>
+                                <div class="bookmark-info">
+                                    <div class="bookmark-blogtitle">
+                                        <a href="${bm.link}" target="_blank">${bm.title}</a>
+                                    </div>
+                                    <div class="bookmark-productinfo">
+                                        <a href="${bm.productUrl}" target="_blank">${bm.productName}</a> &nbsp;&nbsp;${bm.price}원
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+    
+                        //스크롤
+                        const contentHtml = `<div class="bookmark-scroll">${bookmarkHtml}</div>`;
+    
+                        Swal.fire({
+                            title: '북마크',
+                            html: contentHtml,
+                            width: 600,
+                            padding: '3em',
+                            background: '#fff',
+                            backdrop: `rgba(0,0,123,0.4)`
+                        });
+                    },
+                    error: function() {
+                        Swal.fire('오류', '북마크를 불러오는 데 오류가 발생했습니다.', 'error');
+                    }
+                });
+            }
+        </script>
+        <header>
+            <button onclick="showBookmarkPopup()" class="bookmarkviewbtn"><img src="static\css\filled_star.png" class = "bookmarkview" ></button>
+        </header>
+        <searchbox>
+            <searchtitle class="titlebox">
+                <h1>BLOG AD-BLOCK</h1>
+                <span style="font-size : 40px; font-weight:bold; margin-bottom:80px;">네이버 블로그 광고 필터기</span>
+            </searchtitle>
+            <form action="/search" method="POST" onsubmit="return doAction();">
+                <input type="text" name="search_keyword" id="search_keyword" value="" placeholder="검색어를 입력하세요.">
+                <input type="submit"  value="">
+            </form>
+        </searchbox>
+    </body>
+</html>

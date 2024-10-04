@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/result_style.css') }}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
+    <title>Search Result</title>
+
+</head>
+<body>
+    <script>
+        function doAction(){
+            let msgEle = document.getElementById("search_keyword");
+            if(msgEle.value.length == 0){
+                swal('검색어를 입력하세요', ' ' , 'warning');
+                return false;
+            }
+            return true;
+        }
+
+        //let bookmarks = [];
+
+        $(document).ready(function() {
+            // 페이지 로드 시 북마크 상태 가져오기
+            $.ajax({
+                type: "GET",
+                url: "/bookmarks",
+                success: function(bookmarkedLinks) {
+                    console.log(bookmarkedLinks); // 서버에서 받아온 북마크 목록 확인
+                    const bookmarkedSet = new Set(bookmarkedLinks.map(bm => bm.link)); // 링크만 저장
+    
+                    $(".bookmark-btn").each(function() {
+                        const $button = $(this);
+                        const link = $button.data("link");
+    
+                        if (bookmarkedSet.has(link)) {
+                            $button.find("img").attr("src", "static/css/filled_star.png");
+                        } else {
+                            $button.find("img").attr("src", "static/css/empty_star.png");
+                        }
+                    });
+                },
+                error: function() {
+                    console.error("북마크 상태를 가져오는 데 오류가 발생했습니다.");
+                }
+            });
+            
+            $(".bookmark-btn").on("click", function() {
+                const $button = $(this);
+                //const $item = $(this).closest("li");
+                const $item = $button.closest("li"); // 해당 항목의 li 요소 선택
+                const $starIcon = $button.find("img");
+                const isBookmarked = $button.find("img").attr("src") === "static/css/filled_star.png"; // 현재 상태 확인
+                
+    
+                // 북마크 데이터 수집
+                const bookmarkData = {
+                    image: $item.data("image"),
+                    title: $item.data("title"),
+                    link: $item.data("link"),
+                    productName: $item.data("product-name"),
+                    productUrl: $item.data("product-url"),
+                    price: $item.data("price-mark") || "N/A" // 기본값 설정
+                };
+                console.log(bookmarkData); // 데이터 확인
+
+                // 로컬 스토리지에서 북마크 배열 가져오기
+                let bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+                // 중복 확인
+                //const exists = bookmarks.some(bm => bm.link === bookmarkData.link);
+                // 서버로 북마크 데이터 전송
+
+                if (isBookmarked) {
+                    // 북마크 삭제
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/bookmark",
+                        contentType: "application/json",
+                        data: JSON.stringify({ link: bookmarkData.link }), // primary key만 전송
+                        success: function(response) {
+                            //Swal.fire('북마크 삭제', '해당 항목이 북마크에서 삭제되었습니다.', 'success');
+                            $button.find("img").attr("src", "static/css/empty_star.png"); // 빈 별로 변경
+                            // 로컬 스토리지에서 북마크 삭제
+                            //bookmarks = bookmarks.filter(bm => bm.link !== bookmarkData.link);
+                            //localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+                        },
+                        error: function() {
+                            Swal.fire('오류', '북마크 삭제 중 오류가 발생했습니다.', 'error');
+                        }
+                    });
+                    
+                } else {
+                    // 중복 체크
+                    //const exists = bookmarks.some(bm => bm.link === bookmarkData.link);
+                    //if (exists) {
+                    //    Swal.fire('오류', '이미 북마크에 추가된 항목입니다.', 'error');
+                    //    return; // 이미 북마크가 있는 경우 추가 요청을 중단
+                    //}
+                    // 북마크 추가
+                    $.ajax({
+                        type: "POST",
+                        url: "/bookmark",
+                        contentType: "application/json",
+                        data: JSON.stringify(bookmarkData), // 모든 데이터 전송
+                        success: function(response) {
+                            //Swal.fire('북마크 추가', '해당 항목이 북마크에 추가되었습니다.', 'success');
+                            $button.find("img").attr("src", "static/css/filled_star.png"); // 채워진 별로 변경
+                            // 로컬 스토리지에 북마크 추가
+                            //bookmarks.push(bookmarkData);
+                            //localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+                        },
+                        error: function() {
+                            Swal.fire('오류', '북마크 추가 중 오류가 발생했습니다.', 'error');
+                        }
+                    });
+                    
+                }
+            });
+
+        });
+        // 북마크 팝업 띄우기
+        function showBookmarkPopup() {
+            $.ajax({
+                type: "GET",
+                url: "/bookmarks", // 데이터베이스에서 북마크를 불러오는 엔드포인트
+                success: function(savedBookmarks) {
+                // 로컬 스토리지에서 북마크 데이터 불러오기
+                //const savedBookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+                    let bookmarkHtml = savedBookmarks.map(bm => `
+                        <div class="bookmark-item">
+                            <div class="bookmark-img">
+                                <img src="${bm.image}" alt="thumbnail" style="width: 80px; height:80px; margin-right:20px; object-fit:cover;">
+                            </div>
+                            <div class="bookmark-info">
+                                <div class="bookmark-blogtitle">
+                                    <a href="${bm.link}" target="_blank">${bm.title}</a>
+                                </div>
+                                <div class="bookmark-productinfo">
+                                    <a href="${bm.productUrl}" target="_blank">${bm.productName}</a> &nbsp;&nbsp;${bm.price}원
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    //스크롤
+                    const contentHtml = `<div class="bookmark-scroll">${bookmarkHtml}</div>`;
+
+                    Swal.fire({
+                        title: '북마크',
+                        html: contentHtml,
+                        width: 600,
+                        padding: '3em',
+                        background: '#fff',
+                        backdrop: `rgba(0,0,123,0.4)`
+                    });
+                },
+                error: function() {
+                    Swal.fire('오류', '북마크를 불러오는 데 오류가 발생했습니다.', 'error');
+                }
+            });
+        }    
+    </script>
+    <header>
+        <button onclick="showBookmarkPopup()" class="bookmarkviewbtn"><img src="static\css\filled_star.png" class = "bookmarkview" ></button>
+    </header>
+    <div class="container">
+        <h1>BLOG AD-BLOCK</h1>
+        <div class="resultbox">
+            <!--<h1 class="resulttitle">{{ search_keyword }} 검색 결과</h1>-->
+            <div class="searchBox">
+                <form action="/search" method="POST" onsubmit="return doAction();">
+                    <input type="text" name="search_keyword" id="search_keyword" value="{{ search_keyword }}" placeholder="">
+                    <input type="submit"  value="">
+                </form>
+            </div>
+            {% if resBox == 1 %}
+                <div class="researchBox">
+                    <div class="range_option">
+                        <p>가격</p>
+                        <div class="range-slider">
+                        <input type="text" class="js-range-slider" value="" />
+                        </div>
+                    </div>
+                    <div class="rating_option">
+                        <p style="margin-left:50px;">별점</p>
+                        <div class="select_rating">
+                            <select id="rating-filter">
+                                <option value="0">별점 전체</option>
+                                <option value="5" style="color:#EEB300;">★★★★★</option>
+                                <option value="4" style="color:#EEB300;">★★★★☆</option>
+                                <option value="3" style="color:#EEB300;">★★★☆☆</option>
+                                <option value="2" style="color:#EEB300;">★★☆☆☆</option>
+                                <option value="1" style="color:#EEB300;">★☆☆☆☆</option>
+                        </select>
+                        </div>
+                    </div>
+                    <button id="reSearchBtn">상세 검색<img referrerpolicy="no-referrer" src="static\css\search.png" alt="검색" style="vertical-align:top; margin-left: 3px; width:20px; height:20px;"></button>
+                </div>
+            {%endif%}
+            <div class="box_info">
+                <div class = "blog_info_txt">
+                    <span style="font-size: 17px; font-weight: bold;" >블로그 정보</span>
+                    {% if resBox == 1 %}
+                        <div class="sort">
+                            <div class = "og-sort">
+                                <a href="#" id = "sort-og" class="sort-option">기본순</a>
+                            </div>
+                            <div class="price-sort-high">
+                                <a href="#" id = "sort-high-price" class="sort-option">높은 가격순</a>
+                            </div>
+                            <div class="price-sort-low">
+                                <a href="#" id = "sort-low-price" class="sort-option">낮은 가격순</a>
+                            </div>
+                            <div class="rating-sort-high">
+                                <a href="#" id = "sort-high-rating" class="sort-option">리뷰 좋은순</a>
+                            </div>
+                            <div class="rating-sort-many">
+                                <a href="#" id = "sort-many-rating" class="sort-option">리뷰 많은순</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                {% if resBox == 1 %}
+                <div class = "shopping_info_txt">
+                    <span>상품 정보</span>
+                </div>
+                {% endif %}
+            </div>
+            <ul class='no_dot' id='product-list'>
+                {% for link in links %}
+                <li data-image="{{img_urls[loop.index0]}}" data-content = "{{blog_contents[loop.index0]}}" data-title="{{ titles[loop.index0] }}"
+                data-link="{{links[loop.index0]}}" data-product-name="{{blog_product_names[loop.index0]}}" 
+                data-product-url="{{ product_urls[loop.index0] }} "
+                data-nick="{{nicks[loop.index0]}}" data-dates="{{post_dates[loop.index0]}}" 
+                data-price="{{ product_prices[loop.index0] }}" data-price-mark="{{product_prices_marks[loop.index0]}}" 
+                data-rating="{{ blog_ratings[loop.index0] }} " data-review-id="{{ product_urls[loop.index0] }}" 
+                data-review-num="{{review_nums[loop.index0]}}" data-review-mark="{{review_nums_marks[loop.index0]}}">
+                    <div class="item_box">
+                        <div class="item_img">
+                            {% if img_urls[loop.index0] %}
+                                <img referrerpolicy="no-referrer" class="thumbnail" src="{{ img_urls[loop.index0] }}" alt="thumbnail">
+                            {% endif %}
+                        </div>
+                        <div class="blog_box">
+                            <div class="blog_title">
+                                <a href="{{ links[loop.index0]}}" target="_blank" rel="noopener noreferrer" class="blog_link">{{ titles[loop.index0] }}</a>
+                            </div>
+                            <div class="blog_content">
+                                {% if blog_contents[loop.index0] %}
+                                    <p>{{blog_contents[loop.index0]}}…</p>
+                                {% endif %}
+                            </div>
+                            <div class="blog_info">
+                                {% if nicks[loop.index0] %}<span>{{nicks[loop.index0]}}</span>{%endif%}
+                                {% if post_dates[loop.index0] %}<span style="color:#959595; font-size:12.5px ">&nbsp;&nbsp;{{post_dates[loop.index0]}}</span>{%endif%}
+                            </div>
+                        </div>
+                        <div class = "item_info">
+                            {% if blog_product_names[loop.index0] %}
+                                {% if product_urls[loop.index0] %}
+                                    <a href="{{ product_urls[loop.index0] }}" target="_blank" rel="noopener noreferrer" class="product_info">{{ blog_product_names[loop.index0] }}</a><br/>
+                                {% else %}
+                                    {{ blog_product_names[loop.index0] }}<br/>
+                                {% endif %}
+                                {% if product_prices_marks[loop.index0] %}
+                                    <p style = "font-size : 13px;">가격 {{ product_prices_marks[loop.index0] }}원<br/>
+                                    {% if blog_ratings[loop.index0] %}
+                                        별점 {{ blog_ratings[loop.index0] }}점{%if review_nums_marks[loop.index0]%}</span><span style="color:#959595; font-size:12.5px;">({{review_nums_marks[loop.index0]}})<br/></span>
+                                        {%endif%}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            <button id="bookmark-btn" class="bookmark-btn" data-link="{{ link }}"><img src="static\css\empty_star.png" alt="Bookmark" class="star-icon"></button>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var $products = $("#product-list > li");
+            var originalOrder = $products.clone();
+            var min_price = {{ min_price | default(0) }};
+            var max_price = {{ max_price | default(1000000) }};
+            var from = min_price;
+            var to = max_price;
+
+            var $range = $(".js-range-slider");
+
+            $range.ionRangeSlider({
+                skin: "round",
+                type: "double",
+                min: min_price,
+                max: max_price,
+                from: from,
+                to: to,
+                grid: true,
+                grid_num: 5,
+                grid_snap: false,
+                force_edges: true,
+                hide_min_max: false,
+                hide_from_to: false,
+                onChange: function(data) {
+                    from = data.from;
+                    to = data.to;
+                }
+            });
+
+            $("#reSearchBtn").on("click", function() {
+                var selectedRating = $("#rating-filter").val();
+                var minRating = 0;
+                var maxRating = 0;
+
+                if (selectedRating !== '0') {
+                    minRating = parseFloat(selectedRating);
+                    //minRating = 6 - selectRating;
+                    maxRating = minRating + 0.9;
+                }
+                
+                $("li[data-price]").each(function() {
+                    var price = parseInt($(this).data("price"), 10);
+                    var rating = parseInt($(this).data("rating"), 10);
+                    if ((price >= from && price <= to) && (selectedRating === '0' || (rating >= minRating && rating <= maxRating))) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                alert("가격 범위: " + from + "부터 " + to + "까지, 별점: " + selectedRating + " 이상");
+            });
+
+            /**
+            $(".review-btn").on("click", function(e){
+                var reviewId = $(this).data("review-id");
+                console.log("Review ID:", reviewId);
+
+                if (reviewId){
+                    var url = reviewId;
+                    window.open(url, '_blank');
+                } else{
+                    alert("리뷰 URL이 없습닌다")
+                }
+
+                
+                //스크롤
+                $('html, body').animate({
+                    scrollTop: $(document).height()
+                }, 500, function(){
+                    alert("리뷰 탭이 활성화되었습니다");
+                });
+            });
+            **/
+
+            //기본순
+            $("#sort-og").on("click", function(e){
+                e.preventDefault();
+
+                $(".sort-option").removeClass("active");
+                $(this).addClass("active")
+
+                $("#product-list").html(originalOrder);
+            })
+            //낮은 가격순
+            $("#sort-low-price").on("click", function(e) {
+                e.preventDefault();
+
+                $(".sort-option").removeClass("active");
+                $(this).addClass("active");
+
+                var $products = $("#product-list > li");
+
+                $products.sort(function(a, b) {
+                    var priceA = parseInt($(a).data("price"), 10);
+                    var priceB = parseInt($(b).data("price"), 10);
+                    return priceA - priceB;
+                });
+
+                $("#product-list").html($products);
+            });
+
+            //높은 가격순
+            $("#sort-high-price").on("click", function(e) {
+                e.preventDefault();
+
+                $(".sort-option").removeClass("active");
+                $(this).addClass("active");
+
+                var $products = $("#product-list > li");
+
+                $products.sort(function(a, b) {
+                    var priceA = parseInt($(a).data("price"), 10);
+                    var priceB = parseInt($(b).data("price"), 10);
+                    return priceB - priceA;
+                });
+
+                $("#product-list").html($products);
+            });
+
+            //리뷰 좋은순
+            $("#sort-high-rating").on("click", function(e) {
+                e.preventDefault();
+
+                $(".sort-option").removeClass("active");
+                $(this).addClass("active");
+
+                var $products = $("#product-list > li");
+
+                $products.sort(function(a, b) {
+                    var ratingA = parseFloat($(a).data("rating"), 10);
+                    var ratingB = parseFloat($(b).data("rating"), 10);
+                    return ratingB - ratingA;
+                });
+
+                $("#product-list").html($products);
+            });
+
+            //리뷰 많은순
+            $("#sort-many-rating").on("click", function(e) {
+                e.preventDefault();
+
+                $(".sort-option").removeClass("active");
+                $(this).addClass("active");
+
+                var $products = $("#product-list > li");
+
+                $products.sort(function(a, b) {
+                    var reviewNumA = parseInt($(a).data("review-num"), 10);
+                    var reviewNumB = parseInt($(b).data("review-num"), 10);
+                    return reviewNumB - reviewNumA;
+                });
+
+                $("#product-list").html($products);
+            });
+
+            
+            
+        });
+    </script>
+</body>
+</html>

@@ -11,7 +11,6 @@ from google.cloud import vision
 import requests
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from flask_mysqldb import MySQL
-from fake_useragent import UserAgent
 from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 import torch.nn as nn

@@ -1,0 +1,125 @@
+body{
+    min-width: 400px;
+    margin-top: 200px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+
+.titlebox{
+    font-size: 25px;
+    overflow: hidden;
+    margin: 0 0 30px 0;
+}
+
+h1{
+    overflow: hidden;
+    margin: 0 0 20px 0;
+    font-size: 100px;
+}
+
+input[type=text]{
+    border:1px solid #C8BFE7;
+    border-radius:15px;
+    height: 30px;
+    width: 250px;
+    padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+}
+input::placeholder{
+    font-weight: lighter;
+}
+
+input[type=text]:focus{
+    border:1px solid #C8BFE7;
+    border-color: #C8BFE7;;
+    border-radius:15px;
+    height: 30px;
+    width: 250px;
+    padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+    outline: none;
+}
+
+
+input[type=submit]{
+    background-image:url(search.png);
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    padding-left: 30px;
+    padding-top: 30px;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    outline: none;
+    border-width: 0;
+    background-color: #ffffff;
+    vertical-align: middle;
+
+}
+
+input[type=submit]:hover{
+    border-width:0 0 1px;
+    outline: none;
+    border-width: 0;
+    cursor: pointer;
+}
+
+form{
+    margin-top: 80px;
+}
+
+.bookmark-item{
+    text-align:left; 
+    display:flex;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-bottom: 1px solid #ECECEC;
+    height: 80px;
+}
+.bookmark-blogtitle{
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+.bookmark-productinfo{
+    font-size: 14px;
+}
+
+.product_info:hover{
+    font-weight: bold;
+}
+
+.bookmarkview{
+    width: 40px;
+}
+.bookmarkviewbtn{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: right;
+    padding: 10px;
+}
+
+.bookmark-scroll {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+a {
+    text-decoration-line: none;
+}
+
+a:link {
+    color: black;
+}

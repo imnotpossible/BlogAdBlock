@@ -1,0 +1,408 @@
+.range-slider {
+    position: relative;
+    width: 300px;
+    margin: 20px 0px 30px 0px;
+    padding-left:20px;
+    padding-right: 50px;
+    border-right: 1px solid #ECECEC
+}
+
+.range_option p{
+    margin-left: 20px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    width: 80px;
+}
+
+.irs-grid-text, .irs-to, .irs-from {
+    font-size: 11px !important;
+}
+.irs-min, .irs-max {
+    display: none !important;
+}
+.irs-handle {
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+.irs-handle:active {
+    cursor: grabbing !important;
+    cursor: -moz-grabbing !important;
+    cursor: -webkit-grabbing !important;
+}
+
+body {
+    margin-top: 50px 0 0 0;
+    flex-shrink: 0;
+    padding-top: 50px;
+}
+
+
+element.style {
+    padding-left: 0px;
+    margin-right: 0px;
+}
+
+.searchBox{
+    text-align: center;
+    margin-bottom: 50px;
+}
+h1{
+    text-align: center;
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
+input[type=text]{
+    border:1px solid #C8BFE7;
+    border-radius:15px;
+    height: 30px;
+    width: 250px;
+    padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+}
+input::placeholder{
+    font-weight: bold;
+}
+
+input[type=text]:focus{
+    border:1px solid #C8BFE7;
+    border-color: #C8BFE7;;
+    border-radius:15px;
+    height: 30px;
+    width: 250px;
+    padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+    outline: none;
+}
+
+
+input[type=submit]{
+    background-image:url(search.png);
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    padding-left: 30px;
+    padding-top: 30px;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    outline: none;
+    border-width: 0;
+    background-color: #ffffff;
+    vertical-align: middle;
+
+}
+
+input[type=submit]:hover{
+    border-width:0 0 1px;
+    outline: none;
+    border-width: 0;
+    cursor: pointer;
+}
+
+ul{
+    padding-inline-start:0px;
+    margin-block-start: 0px;
+}
+.no_dot {
+    list-style: none;
+}
+
+.resultbox {
+}
+
+.resulttitle {
+    text-align: center;
+    font-size: 30px;
+}
+
+li {
+    border-bottom:1px solid #ECECEC; 
+    border-top: 1px solid #ECECEC;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+li:hover{
+    background-color: #f3f3f3;
+}
+
+a {
+    text-decoration-line: none;
+}
+
+a:link {
+    color: black;
+}
+/**
+a:visited {
+    color: gray;
+}
+a:hover {
+    font-weight: bold;
+}
+    **/
+.blog_link:link{
+    color: black;
+}
+.blog_link:visited{
+    color: gray;
+}
+.blog_link:hover{
+    font-weight: bold;
+}
+
+.starcolor {
+    color: #EEB300;
+    vertical-align: middle;
+}
+
+#min, #max {
+    width: 50px;
+}
+
+.container {
+    width: 1000px;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+select{
+    width: 100px;
+    padding:5px;
+    border: 1px solid #999;
+    margin-right: 50px;
+    margin-left: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.rating_option{
+    height: 158px;
+}
+.rating_option p{
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-top: 16px;
+    padding-left: 5px;
+    width: 80px;
+    padding-bottom: 5px;
+}
+
+#reSearchBtn{
+    overflow: hidden;
+    background-color: white;
+    width: 100px;
+    padding: 5px;
+    margin-right: 50px;
+    margin-left: 30px;
+    margin-top: 40px;
+    border: none;
+    font-weight:bold;
+}
+
+#reSearchBtn:hover{
+    cursor: pointer;
+    background-color: #f3f3f3;
+}
+
+
+.researchBox{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 1000px;
+    min-width: 700px;
+    margin: 20px auto;
+    border-bottom: 1px solid #ECECEC;
+    border-top: 1px solid #ECECEC;
+}
+
+.select_rating{
+    height: 52px;
+    border-right: 1px solid #ECECEC;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    padding-top:13px
+}
+
+.thumbnail{
+    object-fit:cover; 
+    width:140px; 
+    height:140px;
+}
+
+.box_info{
+    display: flex;
+    overflow: hidden;
+    flex-direction: row;
+    gap: 30px;
+    margin-top: 50px;
+}
+.blog_info_txt{
+    width: 720px;
+    border-right: 1px solid #ECECEC;
+    margin: 10px 0 15px 20px;
+    display: flex;
+}
+.shopping_info_txt{
+    font-size: 17px;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+}
+
+.item_box{
+    display: flex;
+    overflow: hidden;
+    flex-direction: row;
+    gap: 30px;
+    height: 140px;
+}
+
+.item_box:hover{
+    background-color: #f3f3f3;
+
+}
+.item_img{
+    overflow: hidden;
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+
+.blog_title{
+
+
+}
+.blog_box{
+    overflow: hidden;
+    width: 530px;
+    height: 140px;
+    border-right: 1px solid #ECECEC;
+    padding-right: 20px;
+}
+
+.blog_info{
+    font-size: 12.5px;
+}
+.blog_content{
+    overflow: hidden;
+    font-size: 13px;
+    width: 400px;
+    max-height: 100px;
+}
+.item_info{
+    overflow: hidden;
+    height: 140px;
+    width: 200px;
+}
+.review-btn{
+    background-color: rgba(255, 255, 255, 0);
+    font-weight: bold;
+    padding: 10px 3px 10px 3px;
+    border: none;
+    font-size: 15px;
+}
+
+.review-btn:hover{
+    cursor: pointer;
+}
+
+.review-btn:active{
+}
+
+.sort{
+    padding-left: 60px;
+}
+.og-sort{
+    padding-left: 20px;
+    display: inline-block;
+}
+.price-sort-high{
+    padding-left: 20px;
+    display: inline-block;
+}
+.price-sort-low{
+    padding-left: 20px;
+    display: inline-block;
+}
+.rating-sort-high{
+    padding-left: 20px;
+    display: inline-block;
+}
+.rating-sort-many{
+    padding-left: 20px;
+    display: inline-block;
+}
+.sort-option{
+    font-size: 12px;
+
+}
+.sort-option:visited{
+    color: black;
+}
+.sort-option:link{
+    cursor: pointer;
+}
+.sort-option.active{
+    font-weight: bold;
+}
+
+.bookmark-btn{
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    padding: 0;
+}
+.star-icon {
+    width: 30px; /* Adjust size as needed */
+}
+
+.bookmark-item{
+    text-align:left; 
+    display:flex;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-bottom: 1px solid #ECECEC;
+    height: 80px;
+}
+.bookmark-blogtitle{
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+.bookmark-productinfo{
+    font-size: 14px;
+}
+
+.product_info:hover{
+    font-weight: bold;
+}
+
+.bookmarkview{
+    width: 40px;
+}
+.bookmarkviewbtn{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: right;
+    padding: 10px;
+}
+
+.bookmark-scroll {
+    max-height: 500px;
+    overflow-y: auto;
+}

@@ -15,16 +15,15 @@ from transformers import BertTokenizer, BertForSequenceClassification
 import torch
 import torch.nn as nn
 
-#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/jhyun/Desktop/BlogAdBlock/blog-ad-block-c25d353fa1c1.json'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/ubuntu/flask/BlogAdBlock/blog-ad-block-c25d353fa1c1.json'
-#client_options = {'api_endpoint' : 'eu-vision.googleapis.com'}
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/jhyun/Desktop/BlogAdBlock/blockadblockv-98ab756bd082.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/ubuntu/flask/BlogAdBlock/blockadblockv-98ab756bd082.json'
+client_options = {'api_endpoint' : 'eu-vision.googleapis.com'}
 app = Flask(__name__)
 SCRAPER_API_KEY ='134d368d4adbccfac370f3294a09317f'
 tokenizer = BertTokenizer.from_pretrained('monologg/kobert')
 model = BertForSequenceClassification.from_pretrained('monologg/kobert', num_labels=2)
 #model.load_state_dict(torch.load('C:/Users/jhyun/Desktop/BlogAdBlock/AdBlocK_model.pth', map_location=torch.device('cpu')))
 model.load_state_dict(torch.load('/home/ubuntu/flask/BlogAdBlock/AdBlock_model.pth', map_location=torch.device('cpu')))
-model.to(device)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -142,7 +141,7 @@ def delete_file(file):
         
 def ocr(image_content):
     print("ocr 진입") 
-    client = vision.ImageAnnotatorClient() #계정 정보 얻어옴
+    client = vision.ImageAnnotatorClient(client_options=client_options) #계정 정보 얻어옴
     #client = vision.ImageAnnotatorClient(credentials=AIzaSyAaL9X5W3bHPO7jcAngRGiFfCNhivAKHSg)
     #with io.open(path, 'rb') as image_file: #입력받은 경로에서 사진 읽어오기
     #    content = image_file.read()
@@ -476,7 +475,7 @@ def handle_search():
         word = request.form['search_keyword']
         search_word = word + ' ' + '후기' + ' | ' + '리뷰'
         
-        search_results=100
+        search_results=10
         
         dir_names = word.replace(' ', '')
 

@@ -24,6 +24,7 @@ tokenizer = BertTokenizer.from_pretrained('monologg/kobert')
 model = BertForSequenceClassification.from_pretrained('monologg/kobert', num_labels=2)
 #model.load_state_dict(torch.load('C:/Users/jhyun/Desktop/BlogAdBlock/AdBlocK_model.pth', map_location=torch.device('cpu')))
 model.load_state_dict(torch.load('/home/ubuntu/flask/BlogAdBlock/AdBlock_model.pth', map_location=torch.device('cpu')))
+model.to(device)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
